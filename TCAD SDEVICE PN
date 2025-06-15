@@ -1,0 +1,39 @@
+File {
+ Grid= "<YOUR PROJECT>_msh.tdr"
+
+ Plot= "<FILE NAME>_des.tdr"
+ 
+ Current = "<FILE NAME>_des.plt"
+ Output= "<FILE NAME>_dvs.out"
+ }
+ Electrode {
+ { Name="anode" Voltage=0.0 }
+ { Name="cathode" Voltage=0.0 }
+ }
+ 
+ Physics {
+ Mobility (DopingDependence)
+ EffectiveIntrinsicDensity (BandGapNarrowing (OldSlotboom))
+ Recombination( SRH(DopingDependence))
+ }
+  Plot { eDensity hDensity eCurrent hCurrent Potential SpaceCharge
+ ElectricField
+ eMobility hMobility eVelocity hVelocity
+ Doping DonorConcentration AcceptorConcentration
+ ConductionBandEnergy ValanceBandEnergy
+ }
+ Math {
+ Extrapolate
+ RelErrControl
+ }
+ Solve {
+ 
+ Poisson
+ Coupled (Iterations=200) {Poisson}
+ Coupled (Iterations=200) {Poisson Electron Hole}
+ Quasistationary(InitialStep=0.001 MinStep=1e-5 MaxStep=0.01 Decrement=2 Increment=1.3
+ Goal{Name="anode" Voltage=2}
+ ) 
+   {Coupled { Poisson Electron Hole } 
+ }
+}
