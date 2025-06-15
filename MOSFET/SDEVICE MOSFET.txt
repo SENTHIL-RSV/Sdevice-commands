@@ -1,0 +1,90 @@
+File {
+ Grid= "<PROJECT NAME>_msh.tdr"
+
+ Plot= "<FILE NAME>_des.tdr"
+ 
+ Current = "<FILE NAME>_des.plt"
+ Output= "<FILE NAME>_dvs.out"
+ }
+ Electrode {
+ { Name="gate" Voltage=0.0 Workfunction=4.24}
+ { Name="source" Voltage=0.0 }
+ { Name="drain" Voltage=0.0}
+ { Name="substrate" Voltage=0.0}
+ }
+ 
+ Physics {
+ Fermi
+ EffectiveIntrinsicDensity(OldSlotboom)	 
+ Mobility (
+ DopingDep
+ eHighFieldsaturation(GradQuasiFermi)
+ hHighFieldsaturation(GradQuasiFermi)
+ Enormal
+ )
+ Recombination(
+ SRH(DopingDep TempDependence)
+ )
+ }
+  Plot { 
+ eDensity hDensity
+ eCurrent hCurrent
+ TotalCurrent/Vector eCurrent/Vector hCurrent/Vector
+ eMobility hMobility
+ eVelocity hVelocity
+ eEnormal hEnormal
+ eTemperature
+ Temperature
+ eQuasiFermi hQuasiFermi
+ ElectricField/Vector Potential Spacecharge
+ Potential Doping SpaceCharge
+ SRH Band2Band Auger
+ AvalancheGeneration eAvalancheGeneration hAvalancheGeneration
+ DonorConcentration AcceptorConcentration
+ Doping
+ eGradQuasiFermi/Vector hGradQuasiFermi/Vector
+ BandGap
+ BandGapNarrowing
+ Affinity
+ ConductionBand ValenceBand
+ eQuantumPotential
+ }
+ Math {
+ Extrapolate
+ Derivatives
+ * Avalderivatives
+ RelErrControl
+ Digits=5
+ 
+ ErRef(electron)=1.e10
+ ErRef(hole)=1.e10
+ Notdamped=100
+ Iterations=50
+ * Newdiscretization
+ Directcurrent
+ Method=ParDiSo
+ Parallel= 2
+ * -VoronoiFaceBoxMethod
+ NaturalBoxMethod
+ }
+ Solve {
+ NewCurrentFile=""
+ Coupled(Iterations=100){ Poisson }
+ Coupled(Iterations=100){ Poisson Electron Hole}
+ Coupled{ Poisson Electron Hole}
+ 
+ Quasistationary(
+ InitialStep=0.1 Increment=1.5
+ MinStep=1e-5 MaxStep=0.5
+ Goal{ Name="drain" Voltage=1}
+ 
+ ){ Coupled{ Poisson Electron Hole} }
+ 
+ 
+ Quasistationary(
+ InitialStep=0.001 Increment=1.5
+ MinStep=1e-5 MaxStep=0.1
+ Goal{ Name="gate" Voltage=0}
+ 
+ ){ Coupled{ Poisson Electron Hole} }
+ }
